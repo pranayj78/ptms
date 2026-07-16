@@ -1,6 +1,10 @@
 # PTMS Engineering Manifesto
 Who wins does not matter, the project should win, and we all learn.
 
+Prefer simplicity over cleverness.
+
+A solution that is easy to understand, test, and maintain is usually the right solution.
+
 ## Our Mission
 
 Build a transparent, trustworthy, and extensible financial platform that empowers professionals to understand and manage their taxes rather than simply calculate them.
@@ -86,3 +90,24 @@ Privacy is a first-class requirement.
 ### 10. Engineering Craftsmanship
 
 Write code that you would be proud to maintain five years from now.
+
+
+Engineering Rules
+
+I propose these become permanent.
+
+The Project Wins.
+
+Business Logic Before UI.
+
+Everything is Tested.
+
+Everything is Explainable.
+
+Everything is Traceable.
+
+Everything is Versioned.
+
+Everything is Reproducible.
+
+Leave the Code Better Than You Found It.

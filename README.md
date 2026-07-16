@@ -1,7 +1,7 @@
 # PTMS
 
 Personal Tax Management System.
-PTMS is an open-source financial platform for professionals with complex compensation and investment portfolios, emphasizing transparency, reproducibility, and auditability.
+PTMS is an engineering-first platform for managing personal finance, tax compliance, investment tracking, and financial reporting with complete transparency and auditability.
 
 PTMS exists because financial software should be transparent, reproducible, and understandable. Users should never have to trust a calculation they cannot inspect.
 
