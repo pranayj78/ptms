@@ -1,0 +1,35 @@
+name: SemVer Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  semver:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate pyproject version is SemVer
+        run: |
+          python - <<'PY'
+          import re
+          import tomllib
+          from pathlib import Path
+
+          data = tomllib.loads(Path('pyproject.toml').read_text())
+          version = data['project']['version']
+          pattern = r'^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
+
+          if not re.match(pattern, version):
+              raise SystemExit(f"Version '{version}' is not valid SemVer (MAJOR.MINOR.PATCH)")
+
+          print(f"SemVer OK: {version}")
+          PY
