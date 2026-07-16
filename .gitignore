@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Workbook outputs
+workbook/output/
+exports/
+
+# Personal Data
+data/private/
+*.pdf
+*.xlsx
+*.xls
+
+# SQLite
+*.db
+
+# Environment
+.env
