@@ -1,5 +1,13 @@
 # PTMS Engineering Manifesto
-Who wins does not matter, the project should win, and we all learn.
+## Principle #0
+
+The Project Wins
+
+Who wins does not matter.
+
+The project should win.
+
+We all learn.
 
 Prefer simplicity over cleverness.
 

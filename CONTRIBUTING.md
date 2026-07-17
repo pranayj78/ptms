@@ -26,38 +26,17 @@ Before opening a Pull Request ask yourself:
 ✓ Can the result be explained to a user?
 
 
-Workflow
-Issue
+## Workflow
 
-↓
+1. Create an issue
+2. Discuss the design
+3. Implement
+4. Test
+5. Document
+6. Review
+7. Merge
 
-Discussion
-
-↓
-
-Architecture
-
-↓
-
-Implementation
-
-↓
-
-Tests
-
-↓
-
-Documentation
-
-↓
-
-Review
-
-↓
-
-Merge
-
-Branch Naming
+## Branch Naming
 feature/PTMS-004-core-enums
 
 feature/PTMS-010-rsu-grant
@@ -70,7 +49,7 @@ refactor/PTMS-031-money
 
 chore/github-actions
 
-Commit Messages
+## Commit Messages
 feat(core): add CountryCode enum
 
 feat(domain): implement Employee aggregate
@@ -84,9 +63,7 @@ test(core): improve Money tests
 ci(github): add MyPy workflow
 
 
-Definition of Done
-
-I want this to be extremely strict.
+## Definition of Done
 
 A feature is not done until:
 
@@ -102,7 +79,7 @@ A feature is not done until:
  CI passes
 
 
-Pull Request Checklist
+## Pull Request Checklist
 
 Correctness
 
@@ -137,7 +114,7 @@ Every review is an opportunity to learn.
 Every contribution should leave the codebase better than it was found.
 
 
-Engineering Values
+## Engineering Values
 
 Transparency
 Simplicity
@@ -149,7 +126,7 @@ Automation
 Continuous Learning
 
 
-Architecture
+## Architecture
 When in doubt,
 
 choose the solution that is
