@@ -1,13 +1,15 @@
 from enum import StrEnum
 
+"""Country code enumerations used throughout PTMS."""
+
 
 class CountryCode(StrEnum):
     """ISO 3166-1 alpha-2 country codes supported by PTMS."""
 
-    IN = "IN"
-    US = "US"
-    GB = "GB"
     AU = "AU"
     CA = "CA"
-    SG = "SG"
+    GB = "GB"
+    IN = "IN"
     NZ = "NZ"
+    SG = "SG"
+    US = "US"

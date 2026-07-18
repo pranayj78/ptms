@@ -1,14 +1,16 @@
 from enum import StrEnum
 
+"""Currency code enumerations used throughout PTMS."""
+
 
 class CurrencyCode(StrEnum):
     """ISO 4217 currency codes."""
 
-    INR = "INR"
-    USD = "USD"
-    GBP = "GBP"
-    EUR = "EUR"
     AUD = "AUD"
     CAD = "CAD"
-    SGD = "SGD"
+    EUR = "EUR"
+    GBP = "GBP"
+    INR = "INR"
     NZD = "NZD"
+    SGD = "SGD"
+    USD = "USD"

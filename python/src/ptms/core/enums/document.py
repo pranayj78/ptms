@@ -1,5 +1,7 @@
 from enum import StrEnum
 
+"""Document type enumerations used throughout PTMS."""
+
 
 class DocumentType(StrEnum):
     """Supported document types."""
