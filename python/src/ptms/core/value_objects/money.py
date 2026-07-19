@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from types import NotImplementedType
+from typing import Self
 
 from ptms.core.enums import CurrencyCode
 from ptms.core.exceptions import CurrencyMismatchError, InvalidMoneyError
@@ -55,7 +56,7 @@ class Money:
         cls,
         amount: str | int | Decimal,
         currency: CurrencyCode,
-    ) -> Money:
+    ) -> Self:
         """
         Construct Money from supported scalar types.
         """
@@ -77,7 +78,7 @@ class Money:
     # Arithmetic
     # -----------------------------
 
-    def __add__(self, other: object) -> Money | NotImplementedType:
+    def __add__(self, other: object) -> Self | NotImplementedType:
         """
         Return the sum of two Money values.
 
@@ -93,12 +94,12 @@ class Money:
 
         self._assert_same_currency(other)
 
-        return Money(
+        return self.__class__(
             amount=self.amount + other.amount,
             currency=self.currency,
         )
 
-    def __sub__(self, other: object) -> Money | NotImplementedType:
+    def __sub__(self, other: object) -> Self | NotImplementedType:
         """
         Return the difference between two Money values.
 
@@ -114,7 +115,7 @@ class Money:
 
         self._assert_same_currency(other)
 
-        return Money(
+        return self.__class__(
             amount=self.amount - other.amount,
             currency=self.currency,
         )
@@ -123,22 +124,22 @@ class Money:
     # Unary Operations
     # -----------------------------
 
-    def __neg__(self) -> Money:
+    def __neg__(self) -> Self:
         """
         Return the additive inverse of Money.
         """
 
-        return Money(
+        return self.__class__(
             amount=-self.amount,
             currency=self.currency,
         )
 
-    def __abs__(self) -> Money:
+    def __abs__(self) -> Self:
         """
         Return Money with absolute amount.
         """
 
-        return Money(
+        return self.__class__(
             amount=abs(self.amount),
             currency=self.currency,
         )
@@ -149,7 +150,7 @@ class Money:
 
     def __lt__(self, other: object) -> bool | NotImplementedType:
         """
-        Compare whether self is less than other.
+        Return True if this monetary value is less than the other.
         """
 
         if not isinstance(other, Money):
@@ -160,7 +161,7 @@ class Money:
 
     def __le__(self, other: object) -> bool | NotImplementedType:
         """
-        Compare whether self is less than or equal to other.
+        Return True if this monetary value is less than or equal to the other.
         """
 
         if not isinstance(other, Money):
@@ -171,7 +172,7 @@ class Money:
 
     def __gt__(self, other: object) -> bool | NotImplementedType:
         """
-        Compare whether self is greater than other.
+        Return True if this monetary value is greater than the other.
         """
 
         if not isinstance(other, Money):
@@ -182,7 +183,7 @@ class Money:
 
     def __ge__(self, other: object) -> bool | NotImplementedType:
         """
-        Compare whether self is greater than or equal to other.
+        Return True if this monetary value is greater than or equal to the other.
         """
 
         if not isinstance(other, Money):
