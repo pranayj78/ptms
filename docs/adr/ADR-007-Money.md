@@ -68,6 +68,13 @@ Decision: Accepted.
 4. Arithmetic rules:
     - `Money + Money` and `Money - Money`: only when currencies match.
     - `Money * scalar`, `Money / scalar`: allowed with decimal-safe scalar types.
+
+### Operator Compatibility
+
+> Public operator methods accept `object` and return `NotImplemented` for unsupported operand types. This follows Python's data model and allows reflected operations (`__radd__`, `__rsub__`, etc.) to participate before Python raises a `TypeError`.
+
+Public interfaces should accurately model how the runtime interacts with the code, while internal validation should enforce domain invariants.
+
 5. Tests must cover:
     - precision behavior,
     - currency mismatch errors,
