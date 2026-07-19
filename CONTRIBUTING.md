@@ -99,6 +99,15 @@ Performance
 
 Security
 
+## ADR Compliance Checklist
+
+- [ ] Immutable
+- [ ] Type-safe
+- [ ] No hidden side effects
+- [ ] Tested
+- [ ] Documented
+- [ ] Matches ADR
+
 
 
 The project wins.
