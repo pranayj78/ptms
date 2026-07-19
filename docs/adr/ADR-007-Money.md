@@ -119,6 +119,17 @@ The following operations are intentionally unsupported:
 - Money / Money
 - Money + different currency
 
+## Verification
+
+The following behaviors must be verified through automated tests:
+
+- [ ] Immutability
+- [ ] Precision preserved
+- [ ] Currency validated
+- [ ] Equality semantics
+- [ ] Hash semantics
+- [ ] Invalid operations
+
 ## Scope
 
 This ADR defines the core monetary abstraction used throughout PTMS.

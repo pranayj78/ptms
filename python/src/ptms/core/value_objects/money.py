@@ -29,6 +29,9 @@ class Money:
     calculations inside PTMS.
     """
 
+    # Future enhancement:
+    # replace with Money.zero(CurrencyCode.USD)
+
     amount: Decimal
     currency: CurrencyCode
 
@@ -39,6 +42,9 @@ class Money:
 
         if not isinstance(self.amount, Decimal):
             raise InvalidMoneyError("Money.amount must be a Decimal.")
+
+        if not isinstance(self.currency, CurrencyCode):
+            raise InvalidMoneyError("Money.currency must be a CurrencyCode.")
 
     # -----------------------------
     # Factory Methods
@@ -95,6 +101,12 @@ class Money:
     def __sub__(self, other: object) -> Money | NotImplementedType:
         """
         Return the difference between two Money values.
+
+        Example:
+            >>> salary = Money.of(amount="100", currency=CurrencyCode.USD)
+            >>> tax = Money.of(amount="30", currency=CurrencyCode.USD)
+            >>> (salary - tax).amount
+            Decimal("70")
         """
 
         if not isinstance(other, Money):
@@ -106,6 +118,78 @@ class Money:
             amount=self.amount - other.amount,
             currency=self.currency,
         )
+
+    # -----------------------------
+    # Unary Operations
+    # -----------------------------
+
+    def __neg__(self) -> Money:
+        """
+        Return the additive inverse of Money.
+        """
+
+        return Money(
+            amount=-self.amount,
+            currency=self.currency,
+        )
+
+    def __abs__(self) -> Money:
+        """
+        Return Money with absolute amount.
+        """
+
+        return Money(
+            amount=abs(self.amount),
+            currency=self.currency,
+        )
+
+    # -----------------------------
+    # Comparison
+    # -----------------------------
+
+    def __lt__(self, other: object) -> bool | NotImplementedType:
+        """
+        Compare whether self is less than other.
+        """
+
+        if not isinstance(other, Money):
+            return NotImplemented
+
+        self._assert_same_currency(other)
+        return self.amount < other.amount
+
+    def __le__(self, other: object) -> bool | NotImplementedType:
+        """
+        Compare whether self is less than or equal to other.
+        """
+
+        if not isinstance(other, Money):
+            return NotImplemented
+
+        self._assert_same_currency(other)
+        return self.amount <= other.amount
+
+    def __gt__(self, other: object) -> bool | NotImplementedType:
+        """
+        Compare whether self is greater than other.
+        """
+
+        if not isinstance(other, Money):
+            return NotImplemented
+
+        self._assert_same_currency(other)
+        return self.amount > other.amount
+
+    def __ge__(self, other: object) -> bool | NotImplementedType:
+        """
+        Compare whether self is greater than or equal to other.
+        """
+
+        if not isinstance(other, Money):
+            return NotImplemented
+
+        self._assert_same_currency(other)
+        return self.amount >= other.amount
 
     # -----------------------------
     # Internal Helpers
