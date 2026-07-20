@@ -155,6 +155,53 @@ class TestMoneyArithmetic:
             _ = left - 5
 
 
+class TestScalarArithmetic:
+    def test_money_can_be_multiplied_by_integer(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        result = salary * 2
+        assert result == Money.of("200000", CurrencyCode.INR)
+        assert salary * 1 == salary
+        assert salary.amount == Decimal("100000")
+        assert result.amount == Decimal("200000")
+
+    def test_money_can_be_multiplied_by_zero(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary * 0 == Money.of("0", CurrencyCode.INR)
+
+    def test_money_can_be_multiplied_by_negative_integer(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary * -1 == Money.of("-100000", CurrencyCode.INR)
+
+    def test_money_cannot_be_multiplied_by_bool(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary * True
+
+    def test_money_cannot_be_multiplied_by_float(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary * cast(Any, 2.5)
+
+    def test_money_cannot_be_multiplied_by_money(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+        factor = Money.of("2", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary * factor
+
+    def test_money_multiplication_preserves_currency(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        result = salary * 2
+
+        assert result.currency is CurrencyCode.INR
+
+
 class TestMoneyComparison:
     def test_less_than(self) -> None:
         smaller = Money.of("10.00", CurrencyCode.USD)

@@ -120,6 +120,21 @@ class Money:
             currency=self.currency,
         )
 
+    def __mul__(self, other: object) -> Self | NotImplementedType:
+        """
+        Return a new Money instance multiplied by an integer scalar.
+        """
+
+        # Accept only the built-in int.
+        # Deliberately reject bool and other integer-like types.
+        if type(other) is not int:
+            return NotImplemented
+
+        return self.__class__(
+            amount=self.amount * Decimal(other),
+            currency=self.currency,
+        )
+
     # -----------------------------
     # Unary Operations
     # -----------------------------
