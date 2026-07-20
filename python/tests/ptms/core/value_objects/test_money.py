@@ -175,6 +175,34 @@ class TestScalarArithmetic:
 
         assert salary * -1 == Money.of("-100000", CurrencyCode.INR)
 
+    def test_money_can_be_multiplied_by_decimal(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary * Decimal("2") == Money.of("200000", CurrencyCode.INR)
+        assert salary * Decimal("1.5") == Money.of("150000", CurrencyCode.INR)
+        assert salary * Decimal("0") == Money.of("0", CurrencyCode.INR)
+        assert salary * Decimal("-1") == Money.of("-100000", CurrencyCode.INR)
+
+    def test_money_decimal_multiplication_preserves_precision(self) -> None:
+        price = Money.of("99.99", CurrencyCode.INR)
+
+        assert price * Decimal("1.25") == Money.of("124.9875", CurrencyCode.INR)
+
+    def test_money_decimal_multiplication_preserves_currency(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        result = salary * Decimal("1.5")
+
+        assert result.currency is CurrencyCode.INR
+
+    def test_money_decimal_multiplication_does_not_mutate_operand(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        _ = salary * Decimal("1.5")
+
+        assert salary.amount == Decimal("100000")
+        assert salary.currency is CurrencyCode.INR
+
     def test_money_cannot_be_multiplied_by_bool(self) -> None:
         salary = Money.of("100000", CurrencyCode.INR)
 
