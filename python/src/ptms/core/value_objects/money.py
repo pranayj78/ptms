@@ -138,6 +138,19 @@ class Money:
     def __rmul__(self, other: object) -> Self | NotImplementedType:
         return self * other
 
+    def __truediv__(self, other: object) -> Self | NotImplementedType:
+        """
+        Return a new Money instance divided by an integer or Decimal scalar.
+        """
+
+        if type(other) is not int and type(other) is not Decimal:
+            return NotImplemented
+
+        return self.__class__(
+            amount=self.amount / Decimal(other),
+            currency=self.currency,
+        )
+
     # -----------------------------
     # Unary Operations
     # -----------------------------
