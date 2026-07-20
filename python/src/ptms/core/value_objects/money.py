@@ -125,13 +125,18 @@ class Money:
         Return a new Money instance multiplied by an integer or Decimal scalar.
         """
 
-        if type(other) is not int and not isinstance(other, Decimal):
+        # Accept only the built-in int and Decimal.
+        # Deliberately reject bool and other integer-like types.
+        if type(other) is not int and type(other) is not Decimal:
             return NotImplemented
 
         return self.__class__(
             amount=self.amount * Decimal(other),
             currency=self.currency,
         )
+
+    def __rmul__(self, other: object) -> Self | NotImplementedType:
+        return self * other
 
     # -----------------------------
     # Unary Operations

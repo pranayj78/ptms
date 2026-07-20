@@ -183,6 +183,18 @@ class TestScalarArithmetic:
         assert salary * Decimal("0") == Money.of("0", CurrencyCode.INR)
         assert salary * Decimal("-1") == Money.of("-100000", CurrencyCode.INR)
 
+    def test_money_supports_reflected_integer_multiplication(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert 2 * salary == Money.of("200000", CurrencyCode.INR)
+        assert 1 * salary == salary
+
+    def test_money_supports_reflected_decimal_multiplication(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert Decimal("2") * salary == Money.of("200000", CurrencyCode.INR)
+        assert Decimal("1.5") * salary == Money.of("150000", CurrencyCode.INR)
+
     def test_money_decimal_multiplication_preserves_precision(self) -> None:
         price = Money.of("99.99", CurrencyCode.INR)
 
@@ -221,6 +233,18 @@ class TestScalarArithmetic:
 
         with pytest.raises(TypeError):
             _ = salary * factor
+
+    def test_money_cannot_be_reflected_multiplied_by_bool(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = True * salary
+
+    def test_money_cannot_be_reflected_multiplied_by_float(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = 2.5 * salary
 
     def test_money_multiplication_preserves_currency(self) -> None:
         salary = Money.of("100000", CurrencyCode.INR)
