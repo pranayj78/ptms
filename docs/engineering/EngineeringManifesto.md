@@ -99,6 +99,22 @@ Privacy is a first-class requirement.
 
 Write code that you would be proud to maintain five years from now.
 
+---
+
+### 11. Preserve Data Fidelity
+
+PTMS domain objects never silently:
+
+- round,
+- normalize,
+- truncate,
+- format,
+- localize.
+
+They preserve the exact business value.
+
+Formatting belongs to the presentation layer.
+
 
 Engineering Rules
 

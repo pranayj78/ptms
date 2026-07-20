@@ -21,7 +21,10 @@ PTMS will represent money with:
 2. `CurrencyCode` enum for currency identity.
 3. Immutable value-object semantics for `Money`.
 4. Domain calculations preserve precision. Rounding occurs only at external boundaries such as reporting, exports, or user-facing presentation.
-5. Validation that prevents arithmetic between different currencies unless explicitly converted.
+5. Validation that prevents money-to-money arithmetic between different currencies unless explicitly converted.
+6. Scalar arithmetic support for multiplication and division by `int` and `Decimal`.
+7. Division by `Money` returns a dimensionless `Decimal` ratio.
+8. `Money * Money` is intentionally unsupported.
 
 ## Alternatives Considered
 
@@ -65,15 +68,20 @@ Decision: Accepted.
 1. `Money` should accept `Decimal | str | int` and normalize to `Decimal` internally.
 2. Money constructors MUST reject float values to prevent accidental precision loss.
 3. Define and document rounding mode (for example `ROUND_HALF_UP`) in one place.
+    - PTMS canonical mode: `ROUND_HALF_UP` (for boundary formatting/reporting layers).
 4. Arithmetic rules:
     - `Money + Money` and `Money - Money`: only when currencies match.
-    - `Money * scalar`, `Money / scalar`: allowed with decimal-safe scalar types.
+    - `Money * scalar` and `Money / scalar`: allowed for `int` and `Decimal`.
+    - `Money / Money`: allowed only when currencies match and returns `Decimal`.
+    - `Money * Money`: unsupported.
 
 ### Operator Compatibility
 
-> Public operator methods accept `object` and return `NotImplemented` for unsupported operand types. This follows Python's data model and allows reflected operations (`__radd__`, `__rsub__`, etc.) to participate before Python raises a `TypeError`.
+> Public operator methods accept `object` and return `NotImplemented` for unsupported operand types. This follows Python's data model and allows reflected operations (for example, `__radd__`, `__rsub__`, `__rmul__`) to participate before Python raises a `TypeError`.
 
 Public interfaces should accurately model how the runtime interacts with the code, while internal validation should enforce domain invariants.
+
+The domain model is permitted to be stricter than Python when doing so improves business correctness and readability.
 
 5. Tests must cover:
     - precision behavior,
@@ -105,7 +113,7 @@ The following conditions must always hold true:
 - A `Money` instance always has a valid `CurrencyCode`.
 - Monetary amounts are represented using `Decimal`.
 - `Money` instances are immutable.
-- Binary arithmetic operations require matching currencies.
+- Money-to-money arithmetic operations require matching currencies.
 - Operations never mutate existing instances.
 - Precision is preserved; automatic rounding is not performed.
 
@@ -116,19 +124,18 @@ The following operations are intentionally unsupported:
 - Money + int
 - Money + Decimal
 - Money * Money
-- Money / Money
 - Money + different currency
 
 ## Verification
 
 The following behaviors must be verified through automated tests:
 
-- [ ] Immutability
-- [ ] Precision preserved
-- [ ] Currency validated
-- [ ] Equality semantics
-- [ ] Hash semantics
-- [ ] Invalid operations
+- [x] Immutability
+- [x] Precision preserved
+- [x] Currency validated
+- [x] Equality semantics
+- [x] Hash semantics
+- [x] Invalid operations
 
 ## Scope
 
@@ -177,5 +184,5 @@ Future enhancements should preserve the Single Responsibility Principle.
 |------|--------|
 | Author | Approved |
 | Architecture Review | Approved |
-| Implementation | Pending |
-| Tests | Pending |
+| Implementation | Approved |
+| Tests | Approved |

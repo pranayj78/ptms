@@ -154,6 +154,223 @@ class TestMoneyArithmetic:
         with pytest.raises(TypeError):
             _ = left - 5
 
+    def test_addition_rejects_decimal_operand(self) -> None:
+        left = Money.of("10", CurrencyCode.USD)
+
+        with pytest.raises(TypeError):
+            _ = left + Decimal("1.5")
+
+
+class TestScalarArithmetic:
+    def test_money_can_be_multiplied_by_integer(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        result = salary * 2
+        assert result == Money.of("200000", CurrencyCode.INR)
+        assert salary * 1 == salary
+        assert salary.amount == Decimal("100000")
+        assert result.amount == Decimal("200000")
+
+    def test_money_can_be_multiplied_by_zero(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary * 0 == Money.of("0", CurrencyCode.INR)
+
+    def test_money_can_be_multiplied_by_negative_integer(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary * -1 == Money.of("-100000", CurrencyCode.INR)
+
+    def test_money_can_be_multiplied_by_decimal(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary * Decimal("2") == Money.of("200000", CurrencyCode.INR)
+        assert salary * Decimal("1.5") == Money.of("150000", CurrencyCode.INR)
+        assert salary * Decimal("0") == Money.of("0", CurrencyCode.INR)
+        assert salary * Decimal("-1") == Money.of("-100000", CurrencyCode.INR)
+
+    def test_money_supports_reflected_integer_multiplication(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert 2 * salary == Money.of("200000", CurrencyCode.INR)
+        assert 1 * salary == salary
+
+    def test_money_supports_reflected_decimal_multiplication(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert Decimal("2") * salary == Money.of("200000", CurrencyCode.INR)
+        assert Decimal("1.5") * salary == Money.of("150000", CurrencyCode.INR)
+        assert Decimal("0") * salary == Money.of("0", CurrencyCode.INR)
+        assert Decimal("-1") * salary == Money.of("-100000", CurrencyCode.INR)
+
+    def test_money_decimal_multiplication_preserves_precision(self) -> None:
+        price = Money.of("99.99", CurrencyCode.INR)
+
+        assert price * Decimal("1.25") == Money.of("124.9875", CurrencyCode.INR)
+
+    def test_money_decimal_multiplication_preserves_currency(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        result = salary * Decimal("1.5")
+
+        assert result.currency is CurrencyCode.INR
+
+    def test_money_decimal_multiplication_does_not_mutate_operand(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        _ = salary * Decimal("1.5")
+
+        assert salary.amount == Decimal("100000")
+        assert salary.currency is CurrencyCode.INR
+
+    def test_money_cannot_be_multiplied_by_bool(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary * True
+
+    def test_money_cannot_be_multiplied_by_float(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary * cast(Any, 2.5)
+
+    def test_money_cannot_be_multiplied_by_money(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+        factor = Money.of("2", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary * factor
+
+    def test_money_cannot_be_reflected_multiplied_by_bool(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = True * salary
+
+    def test_money_cannot_be_reflected_multiplied_by_float(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = 2.5 * salary
+
+    def test_money_multiplication_preserves_currency(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        result = salary * 2
+
+        assert result.currency is CurrencyCode.INR
+
+    def test_money_can_be_divided_by_integer(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+
+        assert salary / 12 == Money.of("10000", CurrencyCode.INR)
+        assert salary / 1 == salary
+        assert salary / -2 == Money.of("-60000", CurrencyCode.INR)
+
+    def test_money_can_be_divided_by_decimal(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary / Decimal("2") == Money.of("50000", CurrencyCode.INR)
+        assert salary / Decimal("0.5") == Money.of("200000", CurrencyCode.INR)
+        assert salary / Decimal("-2") == Money.of("-50000", CurrencyCode.INR)
+
+    def test_money_division_by_zero_raises_zero_division_error(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+
+        with pytest.raises(ZeroDivisionError):
+            _ = salary / 0
+
+    def test_money_division_by_decimal_zero_raises_zero_division_error(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        with pytest.raises(ZeroDivisionError):
+            _ = salary / Decimal("0")
+
+    def test_money_cannot_be_divided_by_bool(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary / True
+
+    def test_money_cannot_be_divided_by_float(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+
+        with pytest.raises(TypeError):
+            _ = salary / cast(Any, 2.5)
+
+    def test_money_divided_by_money_returns_decimal_ratio(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+        divisor = Money.of("2", CurrencyCode.INR)
+
+        assert salary / divisor == Decimal("60000")
+
+    def test_money_can_be_divided_by_money_to_produce_ratio(self) -> None:
+        bonus = Money.of("10000", CurrencyCode.INR)
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        bonus_percentage = bonus / salary
+
+        assert bonus_percentage == Decimal("0.1")
+
+    def test_money_can_be_divided_by_money_to_produce_decimal_completion(self) -> None:
+        tax_paid = Money.of("25000", CurrencyCode.INR)
+        tax_due = Money.of("50000", CurrencyCode.INR)
+
+        completion = tax_paid / tax_due
+
+        assert completion == Decimal("0.5")
+
+    def test_money_divided_by_itself_returns_one(self) -> None:
+        salary = Money.of("100000", CurrencyCode.INR)
+
+        assert salary / salary == Decimal("1")
+
+    def test_money_ratio_preserves_precision(self) -> None:
+        one = Money.of("1", CurrencyCode.INR)
+        three = Money.of("3", CurrencyCode.INR)
+
+        assert one / three == Decimal("0.3333333333333333333333333333")
+
+    def test_money_ratio_requires_matching_currency(self) -> None:
+        paid = Money.of("25000", CurrencyCode.INR)
+        due = Money.of("50000", CurrencyCode.USD)
+
+        with pytest.raises(CurrencyMismatchError):
+            _ = paid / due
+
+    def test_money_ratio_zero_divisor_raises_zero_division_error(self) -> None:
+        paid = Money.of("25000", CurrencyCode.INR)
+        due = Money.of("0", CurrencyCode.INR)
+
+        with pytest.raises(ZeroDivisionError):
+            _ = paid / due
+
+    def test_money_division_preserves_currency(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+
+        result = salary / 12
+
+        assert isinstance(result, Money)
+        assert result.currency is CurrencyCode.INR
+
+    def test_money_division_preserves_precision(self) -> None:
+        salary = Money.of("100", CurrencyCode.INR)
+
+        result = salary / Decimal("3")
+
+        assert isinstance(result, Money)
+        assert result.amount == Decimal("33.33333333333333333333333333")
+
+    def test_money_division_does_not_mutate_operand(self) -> None:
+        salary = Money.of("120000", CurrencyCode.INR)
+
+        # Perform the operation to verify that the original instance remains unchanged.
+        _ = salary / 12
+
+        assert salary.amount == Decimal("120000")
+        assert salary.currency is CurrencyCode.INR
+
 
 class TestMoneyComparison:
     def test_less_than(self) -> None:

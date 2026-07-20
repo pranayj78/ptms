@@ -8,12 +8,16 @@ associated with a specific currency.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from types import NotImplementedType
 from typing import Self
 
 from ptms.core.enums import CurrencyCode
 from ptms.core.exceptions import CurrencyMismatchError, InvalidMoneyError
+
+# Canonical rounding mode for monetary output boundaries.
+# The Money core itself preserves full precision and does not auto-round.
+MONEY_ROUNDING_MODE = ROUND_HALF_UP
 
 
 @dataclass(frozen=True, slots=True)
@@ -117,6 +121,41 @@ class Money:
 
         return self.__class__(
             amount=self.amount - other.amount,
+            currency=self.currency,
+        )
+
+    def __mul__(self, other: object) -> Self | NotImplementedType:
+        """
+        Return a new Money instance multiplied by an integer or Decimal scalar.
+        """
+
+        # Accept only the built-in int and Decimal.
+        # Deliberately reject bool and other integer-like types.
+        if type(other) is not int and type(other) is not Decimal:
+            return NotImplemented
+
+        return self.__class__(
+            amount=self.amount * Decimal(other),
+            currency=self.currency,
+        )
+
+    def __rmul__(self, other: object) -> Self | NotImplementedType:
+        return self * other
+
+    def __truediv__(self, other: object) -> Self | Decimal | NotImplementedType:
+        """
+        Return a new Money instance divided by a scalar, or a Decimal ratio for Money division.
+        """
+
+        if isinstance(other, Money):
+            self._assert_same_currency(other)
+            return self.amount / other.amount
+
+        if type(other) is not int and type(other) is not Decimal:
+            return NotImplemented
+
+        return self.__class__(
+            amount=self.amount / Decimal(other),
             currency=self.currency,
         )
 
