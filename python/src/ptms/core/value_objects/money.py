@@ -138,10 +138,14 @@ class Money:
     def __rmul__(self, other: object) -> Self | NotImplementedType:
         return self * other
 
-    def __truediv__(self, other: object) -> Self | NotImplementedType:
+    def __truediv__(self, other: object) -> Self | Decimal | NotImplementedType:
         """
-        Return a new Money instance divided by an integer or Decimal scalar.
+        Return a new Money instance divided by a scalar, or a Decimal ratio for Money division.
         """
+
+        if isinstance(other, Money):
+            self._assert_same_currency(other)
+            return self.amount / other.amount
 
         if type(other) is not int and type(other) is not Decimal:
             return NotImplemented
