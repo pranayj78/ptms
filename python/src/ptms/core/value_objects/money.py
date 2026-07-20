@@ -8,12 +8,16 @@ associated with a specific currency.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from types import NotImplementedType
 from typing import Self
 
 from ptms.core.enums import CurrencyCode
 from ptms.core.exceptions import CurrencyMismatchError, InvalidMoneyError
+
+# Canonical rounding mode for monetary output boundaries.
+# The Money core itself preserves full precision and does not auto-round.
+MONEY_ROUNDING_MODE = ROUND_HALF_UP
 
 
 @dataclass(frozen=True, slots=True)

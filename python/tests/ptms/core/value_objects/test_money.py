@@ -154,6 +154,12 @@ class TestMoneyArithmetic:
         with pytest.raises(TypeError):
             _ = left - 5
 
+    def test_addition_rejects_decimal_operand(self) -> None:
+        left = Money.of("10", CurrencyCode.USD)
+
+        with pytest.raises(TypeError):
+            _ = left + Decimal("1.5")
+
 
 class TestScalarArithmetic:
     def test_money_can_be_multiplied_by_integer(self) -> None:
@@ -293,7 +299,7 @@ class TestScalarArithmetic:
         with pytest.raises(TypeError):
             _ = salary / cast(Any, 2.5)
 
-    def test_money_cannot_be_divided_by_money(self) -> None:
+    def test_money_divided_by_money_returns_decimal_ratio(self) -> None:
         salary = Money.of("120000", CurrencyCode.INR)
         divisor = Money.of("2", CurrencyCode.INR)
 

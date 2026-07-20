@@ -68,6 +68,7 @@ Decision: Accepted.
 1. `Money` should accept `Decimal | str | int` and normalize to `Decimal` internally.
 2. Money constructors MUST reject float values to prevent accidental precision loss.
 3. Define and document rounding mode (for example `ROUND_HALF_UP`) in one place.
+    - PTMS canonical mode: `ROUND_HALF_UP` (for boundary formatting/reporting layers).
 4. Arithmetic rules:
     - `Money + Money` and `Money - Money`: only when currencies match.
     - `Money * scalar` and `Money / scalar`: allowed for `int` and `Decimal`.
@@ -76,7 +77,7 @@ Decision: Accepted.
 
 ### Operator Compatibility
 
-> Public operator methods accept `object` and return `NotImplemented` for unsupported operand types. This follows Python's data model and allows reflected operations (`__radd__`, `__rsub__`, etc.) to participate before Python raises a `TypeError`.
+> Public operator methods accept `object` and return `NotImplemented` for unsupported operand types. This follows Python's data model and allows reflected operations (for example, `__radd__`, `__rsub__`, `__rmul__`) to participate before Python raises a `TypeError`.
 
 Public interfaces should accurately model how the runtime interacts with the code, while internal validation should enforce domain invariants.
 
@@ -129,12 +130,12 @@ The following operations are intentionally unsupported:
 
 The following behaviors must be verified through automated tests:
 
-- [ ] Immutability
-- [ ] Precision preserved
-- [ ] Currency validated
-- [ ] Equality semantics
-- [ ] Hash semantics
-- [ ] Invalid operations
+- [x] Immutability
+- [x] Precision preserved
+- [x] Currency validated
+- [x] Equality semantics
+- [x] Hash semantics
+- [x] Invalid operations
 
 ## Scope
 
@@ -183,5 +184,5 @@ Future enhancements should preserve the Single Responsibility Principle.
 |------|--------|
 | Author | Approved |
 | Architecture Review | Approved |
-| Implementation | Pending |
-| Tests | Pending |
+| Implementation | Approved |
+| Tests | Approved |
