@@ -38,9 +38,50 @@ def test_parse_accepts_numeric_string_start_year() -> None:
     assert ay.end_year == 2027
 
 
-def test_parse_rejects_non_numeric_string() -> None:
+def test_parse_accepts_canonical_ay_string() -> None:
+    ay = AssessmentYear.parse("AY 2026-27")
+
+    assert ay.start_year == 2026
+    assert ay.end_year == 2027
+
+
+def test_parse_accepts_minimum_supported_ay_string() -> None:
+    ay = AssessmentYear.parse("AY 1962-63")
+
+    assert ay.start_year == 1962
+    assert ay.end_year == 1963
+
+
+def test_parse_accepts_century_wrap_ay_string() -> None:
+    ay = AssessmentYear.parse("AY 2099-00")
+
+    assert ay.start_year == 2099
+    assert ay.end_year == 2100
+
+
+def test_parse_rejects_missing_space_after_ay_prefix() -> None:
     with pytest.raises(InvalidAssessmentYearError):
         _ = AssessmentYear.parse("AY2026-27")
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "AY2026-27",
+        "AY 2026/27",
+        "AY2026",
+        "AY 26-27",
+        "AY 2026-2027",
+    ],
+)
+def test_parse_rejects_invalid_ay_string_formats(value: str) -> None:
+    with pytest.raises(InvalidAssessmentYearError):
+        _ = AssessmentYear.parse(value)
+
+
+def test_parse_rejects_ay_string_with_mismatched_suffix() -> None:
+    with pytest.raises(InvalidAssessmentYearError):
+        _ = AssessmentYear.parse("AY 2026-28")
 
 
 def test_parse_rejects_bool() -> None:
