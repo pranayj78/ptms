@@ -17,6 +17,7 @@ MIN_SUPPORTED_START_YEAR = 1962
 # Explicit upper bound for supported AY start year.
 MAX_SUPPORTED_START_YEAR = 9999
 INVALID_AY_FORMAT = "Invalid AssessmentYear format. Expected 'AY YYYY-YY'."
+INVALID_YEAR_RANGE_FORMAT = "Invalid AssessmentYear format. Expected 'YYYY-YYYY'."
 
 
 @dataclass(
@@ -37,10 +38,11 @@ class AssessmentYear:
     def parse(cls, value: object) -> Self:
         """Parse AssessmentYear from a start year value.
 
-        This incremental parser currently supports:
+        This parser currently supports:
         - 2026 (int)
         - "2026" (str)
         - "AY 2026-27" (str)
+        - "2026-2027" (str)
         """
 
         if type(value) is int:
@@ -49,33 +51,71 @@ class AssessmentYear:
         if type(value) is str:
             normalized = value.strip()
             if normalized.isdigit():
-                return cls.of(int(normalized))
+                return cls._parse_numeric_year(normalized)
 
             if normalized.startswith("AY "):
-                payload = normalized.removeprefix("AY ")
-                try:
-                    start_part, end_suffix_part = payload.split("-")
-                except ValueError as exc:
-                    raise InvalidAssessmentYearError(INVALID_AY_FORMAT) from exc
-                if len(start_part) != 4 or not start_part.isdigit():
-                    raise InvalidAssessmentYearError(INVALID_AY_FORMAT)
+                return cls._parse_ay_string(normalized)
 
-                if len(end_suffix_part) != 2 or not end_suffix_part.isdigit():
-                    raise InvalidAssessmentYearError(INVALID_AY_FORMAT)
-
-                start_year = int(start_part)
-                expected_suffix = f"{(start_year + 1) % 100:02d}"
-                if end_suffix_part != expected_suffix:
-                    raise InvalidAssessmentYearError(
-                        "AssessmentYear end-year suffix does not match start year."
-                    )
-
-                return cls.of(start_year)
+            elif normalized.count("-") == 1:
+                return cls._parse_year_range(normalized)
 
         raise InvalidAssessmentYearError(
             "AssessmentYear.parse currently supports int year values, numeric year strings, "
-            "and 'AY YYYY-YY' strings; for example 2026, '2026', or 'AY 2026-27'."
+            "'AY YYYY-YY' strings, and 'YYYY-YYYY' strings; for example 2026, '2026', "
+            "'AY 2026-27', or '2026-2027'."
         )
+
+    @classmethod
+    def _parse_numeric_year(cls, value: str) -> Self:
+        return cls.of(int(value))
+
+    @classmethod
+    def _parse_ay_string(cls, value: str) -> Self:
+        payload = value.removeprefix("AY ")
+        try:
+            start_part, end_suffix_part = payload.split("-")
+        except ValueError as exc:
+            raise InvalidAssessmentYearError(INVALID_AY_FORMAT) from exc
+
+        if len(start_part) != 4 or not start_part.isdigit():
+            raise InvalidAssessmentYearError(INVALID_AY_FORMAT)
+
+        if len(end_suffix_part) != 2 or not end_suffix_part.isdigit():
+            raise InvalidAssessmentYearError(INVALID_AY_FORMAT)
+
+        start_year = int(start_part)
+        expected_suffix = f"{(start_year + 1) % 100:02d}"
+        if end_suffix_part != expected_suffix:
+            raise InvalidAssessmentYearError(
+                "AssessmentYear end-year suffix does not match start year."
+            )
+
+        return cls.of(start_year)
+
+    @classmethod
+    def _parse_year_range(cls, value: str) -> Self:
+        try:
+            start_part, end_part = value.split("-")
+        except ValueError as exc:
+            raise InvalidAssessmentYearError(INVALID_YEAR_RANGE_FORMAT) from exc
+
+        if len(start_part) != 4 or not start_part.isdigit():
+            raise InvalidAssessmentYearError(INVALID_YEAR_RANGE_FORMAT)
+
+        if len(end_part) != 4 or not end_part.isdigit():
+            raise InvalidAssessmentYearError(INVALID_YEAR_RANGE_FORMAT)
+
+        start_year = int(start_part)
+        end_year = int(end_part)
+        cls._validate_year_range(start_year, end_year)
+        return cls.of(start_year)
+
+    @staticmethod
+    def _validate_year_range(start_year: int, end_year: int) -> None:
+        if end_year != start_year + 1:
+            raise InvalidAssessmentYearError(
+                "AssessmentYear end year must be exactly one year after the start year."
+            )
 
     def __post_init__(self) -> None:
         if type(self.start_year) is not int:
