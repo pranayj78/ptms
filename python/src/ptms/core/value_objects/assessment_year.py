@@ -32,6 +32,28 @@ class AssessmentYear:
 
         return cls(start_year=start_year)
 
+    @classmethod
+    def parse(cls, value: object) -> Self:
+        """Parse AssessmentYear from a start year value.
+
+        This incremental parser currently supports:
+        - 2026 (int)
+        - "2026" (str)
+        """
+
+        if type(value) is int:
+            return cls.of(value)
+
+        if type(value) is str:
+            normalized = value.strip()
+            if normalized.isdigit():
+                return cls.of(int(normalized))
+
+        raise InvalidAssessmentYearError(
+            "AssessmentYear.parse currently supports int year values and numeric year strings, "
+            "for example 2026 or '2026'."
+        )
+
     def __post_init__(self) -> None:
         if type(self.start_year) is not int:
             raise InvalidAssessmentYearError("AssessmentYear.start_year must be an int.")

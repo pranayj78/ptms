@@ -24,6 +24,30 @@ def test_factory_construction_with_valid_start_year() -> None:
     assert ay.end_year == 2027
 
 
+def test_parse_accepts_int_start_year() -> None:
+    ay = AssessmentYear.parse(2026)
+
+    assert ay.start_year == 2026
+    assert ay.end_year == 2027
+
+
+def test_parse_accepts_numeric_string_start_year() -> None:
+    ay = AssessmentYear.parse("2026")
+
+    assert ay.start_year == 2026
+    assert ay.end_year == 2027
+
+
+def test_parse_rejects_non_numeric_string() -> None:
+    with pytest.raises(InvalidAssessmentYearError):
+        _ = AssessmentYear.parse("AY2026-27")
+
+
+def test_parse_rejects_bool() -> None:
+    with pytest.raises(InvalidAssessmentYearError):
+        _ = AssessmentYear.parse(True)
+
+
 def test_repr_contains_start_year() -> None:
     ay = AssessmentYear.of(2026)
 
