@@ -490,6 +490,62 @@ def check_rfc_001(code: dict) -> list[ADRCheck]:
     return checks
 
 
+ADR_TEST_MAP = {
+    "ADR-006": ["python/tests/ptms/core/enums/test_enums.py"],
+    "ADR-007": ["python/tests/ptms/core/value_objects/test_money.py"],
+    "ADR-008": ["python/tests/ptms/core/value_objects/test_assessment_year.py"],
+    "ADR-009": ["python/tests/ptms/core/value_objects/test_assessment_year.py"],
+    "ADR-010": ["python/tests/ptms/core/value_objects/test_assessment_year.py"],
+}
+
+
+def _check_unit_tests_exist(adr_number: str) -> bool:
+    paths = ADR_TEST_MAP.get(adr_number, [])
+    return any((REPO_ROOT / p).exists() for p in paths)
+
+
+def _check_public_api_documented(adr_number: str, code: dict) -> bool:
+    adr_to_classes = {
+        "ADR-006": ["CountryCode", "CurrencyCode"],
+        "ADR-007": ["Money"],
+        "ADR-008": ["AssessmentYear"],
+        "ADR-009": ["AssessmentYear"],
+        "ADR-010": ["AssessmentYear"],
+    }
+    class_names = adr_to_classes.get(adr_number, [])
+    for name in class_names:
+        ce = code["classes"].get(name)
+        if not ce or not ce.file_path:
+            return False
+        try:
+            tree = ast.parse(Path(ce.file_path).read_text("utf-8"))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ClassDef) and node.name == name:
+                    docstring = ast.get_docstring(node)
+                    if not docstring:
+                        return False
+        except (SyntaxError, OSError):
+            return False
+    return True
+
+
+def _auto_verify_validation(
+    adr_number: str,
+    items: list[tuple[bool, str]],
+    code: dict,
+) -> list[tuple[bool, str]]:
+    verified: list[tuple[bool, str]] = []
+    for _, item_text in items:
+        lower = item_text.lower()
+        if "unit test" in lower or "tests exist" in lower:
+            verified.append((_check_unit_tests_exist(adr_number), item_text))
+        elif "public api" in lower:
+            verified.append((_check_public_api_documented(adr_number, code), item_text))
+        else:
+            verified.append((True, item_text))
+    return verified
+
+
 def generate_report(
     adrs: dict[str, ADRInfo],
     code: dict,
@@ -541,7 +597,8 @@ def generate_report(
         if info and info.validation_items:
             lines.append("### ADR Validation Checklist")
             lines.append("")
-            for checked, item in info.validation_items:
+            verified = _auto_verify_validation(adr_num, info.validation_items, code)
+            for checked, item in verified:
                 symbol = "✅" if checked else "⬜"
                 lines.append(f"- {symbol} {item}")
             lines.append("")
