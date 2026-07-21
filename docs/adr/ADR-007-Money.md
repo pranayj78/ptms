@@ -137,6 +137,16 @@ The following behaviors must be verified through automated tests:
 - [x] Hash semantics
 - [x] Invalid operations
 
+## Validation
+
+This ADR is considered implemented when:
+
+- [x] Unit tests exist
+- [x] Documentation updated
+- [x] MyPy passes
+- [x] Ruff passes
+- [x] Public API documented
+
 ## Scope
 
 This ADR defines the core monetary abstraction used throughout PTMS.

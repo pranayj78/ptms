@@ -42,4 +42,13 @@ Business logic should never change because the UI changed.
 
  Excel   CLI   PDF   REST API   Web UI
 
+## Canonical Representation Principle
+
+Every Value Object follows these rules:
+
+- One canonical internal representation.
+- One canonical string representation (`__str__`).
+- Zero or more parsing formats.
+- Presentation-specific formatting belongs outside the domain unless it represents a distinct business concept.
+
 
