@@ -39,5 +39,5 @@ strict_equality = true
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "python/tests"]
 pythonpath = ["python/src"]
