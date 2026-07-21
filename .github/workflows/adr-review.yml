@@ -6,11 +6,16 @@ on:
       - 'python/src/**'
       - 'docs/adr/**'
       - 'docs/rfcs/**'
+      - 'scripts/**'
+      - '.github/workflows/adr-review.yml'
   pull_request:
     paths:
       - 'python/src/**'
       - 'docs/adr/**'
       - 'docs/rfcs/**'
+      - 'scripts/**'
+      - '.github/workflows/adr-review.yml'
+  workflow_dispatch:
 
 jobs:
   review:
