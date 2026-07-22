@@ -160,6 +160,20 @@ class Money:
         )
 
     # -----------------------------
+    # String Representation
+    # -----------------------------
+
+    def __str__(self) -> str:
+        """
+        Return canonical string representation.
+
+        Format: ``<amount> <currency>``
+        Example: ``100.50 INR``
+        """
+
+        return f"{self.amount} {self.currency.value}"
+
+    # -----------------------------
     # Unary Operations
     # -----------------------------
 

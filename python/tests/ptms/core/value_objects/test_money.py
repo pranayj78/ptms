@@ -449,6 +449,42 @@ class TestMoneyUnaryOperations:
         assert money.amount == Decimal("-10.00")
 
 
+class TestMoneyString:
+    def test_str_returns_amount_and_currency(self) -> None:
+        money = Money.of("100.50", CurrencyCode.INR)
+
+        assert str(money) == "100.50 INR"
+
+    def test_str_with_different_currencies(self) -> None:
+        assert str(Money.of("50", CurrencyCode.USD)) == "50 USD"
+        assert str(Money.of("75.25", CurrencyCode.GBP)) == "75.25 GBP"
+        assert str(Money.of("200", CurrencyCode.SGD)) == "200 SGD"
+
+    def test_str_with_negative_amount(self) -> None:
+        money = Money.of("-50.00", CurrencyCode.INR)
+
+        assert str(money) == "-50.00 INR"
+
+    def test_str_preserves_precision(self) -> None:
+        money = Money.of("1.2300", CurrencyCode.USD)
+
+        assert str(money) == "1.2300 USD"
+
+    def test_str_with_zero(self) -> None:
+        money = Money.of("0", CurrencyCode.INR)
+
+        assert str(money) == "0 INR"
+
+    def test_repr_is_different_from_str(self) -> None:
+        money = Money.of("100.50", CurrencyCode.INR)
+
+        representation = repr(money)
+
+        assert "Money" in representation
+        assert "100.50" in representation
+        assert "INR" in representation
+
+
 class TestMoneyInvariants:
     def test_money_is_immutable(self) -> None:
         money = Money.of("100.00", CurrencyCode.USD)
