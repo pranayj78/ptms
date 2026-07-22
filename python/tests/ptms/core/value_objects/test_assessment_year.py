@@ -120,10 +120,40 @@ def test_parse_rejects_bool() -> None:
         _ = AssessmentYear.parse(True)
 
 
-def test_repr_contains_start_year() -> None:
+def test_str_returns_canonical_format() -> None:
     ay = AssessmentYear.of(2026)
 
-    assert "2026" in repr(ay)
+    assert str(ay) == "2026-2027"
+
+
+def test_str_with_single_digit_year() -> None:
+    ay = AssessmentYear.of(2000)
+
+    assert str(ay) == "2000-2001"
+
+
+def test_str_with_century_wrap() -> None:
+    ay = AssessmentYear.of(2099)
+
+    assert str(ay) == "2099-2100"
+
+
+def test_str_with_early_year() -> None:
+    ay = AssessmentYear.of(1962)
+
+    assert str(ay) == "1962-1963"
+
+
+def test_repr_returns_constructor_form() -> None:
+    ay = AssessmentYear.of(2026)
+
+    assert repr(ay) == "AssessmentYear(2026)"
+
+
+def test_repr_differs_from_str() -> None:
+    ay = AssessmentYear.of(2026)
+
+    assert repr(ay) != str(ay)
 
 
 def test_end_year_is_derived_and_not_stored_field() -> None:

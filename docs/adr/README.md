@@ -2,9 +2,8 @@ Architecture Decision Records (ADRs) capture important technical decisions.
 
 Every architectural decision that affects the long-term direction of PTMS should be documented as an ADR.
 
-ADRs are immutable historical records.
+Proposed ADRs are living design documents and may be revised during architectural review. Once an ADR reaches Accepted status, it becomes an immutable historical record. Any subsequent change in architectural direction requires a new ADR that supersedes or amends the previous decision.
 
-If a decision changes, create a new ADR instead of modifying the old one.
 
 ## Index
 

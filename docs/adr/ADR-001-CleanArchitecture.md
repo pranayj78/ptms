@@ -48,7 +48,13 @@ Every Value Object follows these rules:
 
 - One canonical internal representation.
 - One canonical string representation (`__str__`).
+    __str__() returns the canonical, locale-independent representation of the value object. This representation is stable and intended for developers, logging, diagnostics, and system-to-system communication.
+
 - Zero or more parsing formats.
 - Presentation-specific formatting belongs outside the domain unless it represents a distinct business concept.
+
+Presentation Representation
+
+User-facing formatting (for example, "AY 2026-27") is outside the responsibility of the domain model and should be provided by the presentation layer or dedicated formatting components.
 
 

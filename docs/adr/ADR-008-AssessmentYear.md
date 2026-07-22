@@ -31,7 +31,9 @@ PTMS will introduce `AssessmentYear` as an immutable value object.
 
 The canonical string representation of an AssessmentYear is:
 
-`AY 2026-27`
+`2026-2027`
+
+> **Decision Revision:** After establishing the Canonical Representation Principle during the implementation of the Money value object, the canonical string representation was revised from `AY 2026-27` to `2026-2027`. The `AY YYYY-YY` format remains a supported parsing format and may be produced by explicit formatting methods, but it is no longer the canonical representation.
 
 ### Equality
 

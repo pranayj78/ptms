@@ -133,6 +133,12 @@ class AssessmentYear:
                 f"{MAX_SUPPORTED_START_YEAR}."
             )
 
+    def __str__(self) -> str:
+        return f"{self.start_year}-{self.end_year}"
+
+    def __repr__(self) -> str:
+        return f"AssessmentYear({self.start_year})"
+
     @property
     def end_year(self) -> int:
         return self.start_year + 1
