@@ -8,16 +8,20 @@ ordered domain primitive.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from ptms.core.exceptions import InvalidAssessmentYearError
+from ptms.core.value_objects._year_utils import (
+    parse_year_range,
+    validate_start_year,
+)
 
-# Earliest supported AY start year in PTMS.
+if TYPE_CHECKING:
+    from ptms.core.value_objects.financial_year import FinancialYear
+
 MIN_SUPPORTED_START_YEAR = 1962
-# Explicit upper bound for supported AY start year.
 MAX_SUPPORTED_START_YEAR = 9999
 INVALID_AY_FORMAT = "Invalid AssessmentYear format. Expected 'AY YYYY-YY'."
-INVALID_YEAR_RANGE_FORMAT = "Invalid AssessmentYear format. Expected 'YYYY-YYYY'."
 
 
 @dataclass(
@@ -94,44 +98,17 @@ class AssessmentYear:
 
     @classmethod
     def _parse_year_range(cls, value: str) -> Self:
-        try:
-            start_part, end_part = value.split("-")
-        except ValueError as exc:
-            raise InvalidAssessmentYearError(INVALID_YEAR_RANGE_FORMAT) from exc
-
-        if len(start_part) != 4 or not start_part.isdigit():
-            raise InvalidAssessmentYearError(INVALID_YEAR_RANGE_FORMAT)
-
-        if len(end_part) != 4 or not end_part.isdigit():
-            raise InvalidAssessmentYearError(INVALID_YEAR_RANGE_FORMAT)
-
-        start_year = int(start_part)
-        end_year = int(end_part)
-        cls._validate_year_range(start_year, end_year)
+        start_year = parse_year_range(value, InvalidAssessmentYearError)
         return cls.of(start_year)
 
-    @staticmethod
-    def _validate_year_range(start_year: int, end_year: int) -> None:
-        if end_year != start_year + 1:
-            raise InvalidAssessmentYearError(
-                "AssessmentYear end year must be exactly one year after the start year."
-            )
-
     def __post_init__(self) -> None:
-        if type(self.start_year) is not int:
-            raise InvalidAssessmentYearError("AssessmentYear.start_year must be an int.")
-
-        if self.start_year < MIN_SUPPORTED_START_YEAR:
-            raise InvalidAssessmentYearError(
-                "AssessmentYear.start_year must be greater than or equal to "
-                f"{MIN_SUPPORTED_START_YEAR}."
-            )
-
-        if self.start_year > MAX_SUPPORTED_START_YEAR:
-            raise InvalidAssessmentYearError(
-                "AssessmentYear.start_year must be less than or equal to "
-                f"{MAX_SUPPORTED_START_YEAR}."
-            )
+        validate_start_year(
+            self.start_year,
+            MIN_SUPPORTED_START_YEAR,
+            MAX_SUPPORTED_START_YEAR,
+            InvalidAssessmentYearError,
+            "AssessmentYear",
+        )
 
     def __str__(self) -> str:
         return f"{self.start_year}-{self.end_year}"
@@ -142,3 +119,9 @@ class AssessmentYear:
     @property
     def end_year(self) -> int:
         return self.start_year + 1
+
+    @property
+    def financial_year(self) -> FinancialYear:
+        from ptms.core.value_objects.financial_year import FinancialYear
+
+        return FinancialYear.of(self.start_year - 1)
