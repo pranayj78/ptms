@@ -7,6 +7,10 @@ from ptms.core.exceptions.assessment_year import (
     InvalidAssessmentYearError,
 )
 from ptms.core.exceptions.base import PTMSError
+from ptms.core.exceptions.financial_year import (
+    FinancialYearError,
+    InvalidFinancialYearError,
+)
 from ptms.core.exceptions.money import (
     CurrencyMismatchError,
     InvalidMoneyError,
@@ -17,6 +21,8 @@ __all__ = [
     "PTMSError",
     "AssessmentYearError",
     "InvalidAssessmentYearError",
+    "FinancialYearError",
+    "InvalidFinancialYearError",
     "MoneyError",
     "CurrencyMismatchError",
     "InvalidMoneyError",
