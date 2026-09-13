@@ -5,6 +5,14 @@ PTMS is an engineering-first platform for managing personal finance, tax complia
 
 PTMS exists because financial software should be transparent, reproducible, and understandable. Users should never have to trust a calculation they cannot inspect.
 
+> **Project status:** PTMS is currently in its architecture and domain-foundation phase. The
+> repository implements and validates foundational financial and tax-domain primitives; the
+> tax engines, persistence adapters, imports, and reporting interfaces described in the roadmap
+> are planned capabilities.
+
+For a concise overview of the product, implemented scope, architecture, and engineering
+practices, see the [shareable project summary](PROJECT_SUMMARY.md).
+
 ## Development Setup
 
 1. Install dependencies:
