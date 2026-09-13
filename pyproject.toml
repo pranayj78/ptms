@@ -1,7 +1,7 @@
 [project]
 name = "ptms"
 version = "0.1.0"
-description = "Add your description here"
+description = "An auditable, domain-driven personal tax management platform for Indian taxpayers"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
